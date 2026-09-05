@@ -2,11 +2,10 @@ import sys
 
 from PySide6.QtWidgets import QApplication
 
-from gui.win_main import MainWindow
+from gui.tree_model import MainWindow
 
 
 def main():
-
     app = QApplication(sys.argv)
 
     window = MainWindow()

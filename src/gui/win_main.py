@@ -1,166 +1,71 @@
-import json
+# -*- coding: utf-8 -*-
 
-from PySide6.QtWidgets import (
-    QMainWindow,
-    QWidget,
-    QVBoxLayout,
-    QHBoxLayout,
-    QPushButton,
-    QPlainTextEdit,
-    QLabel,
-    QFileDialog,
-    QMessageBox,
-)
+################################################################################
+## Form generated from reading UI file 'win_main.ui'
+##
+## Created by: Qt User Interface Compiler version 6.9.3
+##
+## WARNING! All changes made in this file will be lost when recompiling UI file!
+################################################################################
 
+from PySide6.QtCore import (QCoreApplication, QDate, QDateTime, QLocale,
+    QMetaObject, QObject, QPoint, QRect,
+    QSize, QTime, QUrl, Qt)
+from PySide6.QtGui import (QAction, QBrush, QColor, QConicalGradient,
+    QCursor, QFont, QFontDatabase, QGradient,
+    QIcon, QImage, QKeySequence, QLinearGradient,
+    QPainter, QPalette, QPixmap, QRadialGradient,
+    QTransform)
+from PySide6.QtWidgets import (QApplication, QHeaderView, QMainWindow, QMenu,
+    QMenuBar, QSizePolicy, QStatusBar, QTreeView,
+    QVBoxLayout, QWidget)
 
-class MainWindow(QMainWindow):
+class Ui_MainWindow(object):
+    def setupUi(self, MainWindow):
+        if not MainWindow.objectName():
+            MainWindow.setObjectName(u"MainWindow")
+        MainWindow.resize(800, 600)
+        self.actionopen = QAction(MainWindow)
+        self.actionopen.setObjectName(u"actionopen")
+        self.actionedit = QAction(MainWindow)
+        self.actionedit.setObjectName(u"actionedit")
+        self.actionSave_As = QAction(MainWindow)
+        self.actionSave_As.setObjectName(u"actionSave_As")
+        self.centralwidget = QWidget(MainWindow)
+        self.centralwidget.setObjectName(u"centralwidget")
+        self.verticalLayout = QVBoxLayout(self.centralwidget)
+        self.verticalLayout.setObjectName(u"verticalLayout")
+        self.listView = QTreeView(self.centralwidget)
+        self.listView.setObjectName(u"listView")
 
-    def __init__(self):
-        super().__init__()
+        self.verticalLayout.addWidget(self.listView)
 
-        self.current_file = None
+        MainWindow.setCentralWidget(self.centralwidget)
+        self.menubar = QMenuBar(MainWindow)
+        self.menubar.setObjectName(u"menubar")
+        self.menubar.setGeometry(QRect(0, 0, 800, 33))
+        self.menuFile = QMenu(self.menubar)
+        self.menuFile.setObjectName(u"menuFile")
+        MainWindow.setMenuBar(self.menubar)
+        self.statusbar = QStatusBar(MainWindow)
+        self.statusbar.setObjectName(u"statusbar")
+        MainWindow.setStatusBar(self.statusbar)
 
-        self.setWindowTitle("JSON Editor")
-        self.resize(1000, 700)
+        self.menubar.addAction(self.menuFile.menuAction())
+        self.menuFile.addAction(self.actionopen)
+        self.menuFile.addAction(self.actionedit)
+        self.menuFile.addAction(self.actionSave_As)
 
-        self.create_ui()
+        self.retranslateUi(MainWindow)
 
-    def create_ui(self):
+        QMetaObject.connectSlotsByName(MainWindow)
+    # setupUi
 
-    
-        widget = QWidget()
-        self.setCentralWidget(widget)
+    def retranslateUi(self, MainWindow):
+        MainWindow.setWindowTitle(QCoreApplication.translate("MainWindow", u"MainWindow", None))
+        self.actionopen.setText(QCoreApplication.translate("MainWindow", u"Upload", None))
+        self.actionedit.setText(QCoreApplication.translate("MainWindow", u"Save", None))
+        self.actionSave_As.setText(QCoreApplication.translate("MainWindow", u"Save As", None))
+        self.menuFile.setTitle(QCoreApplication.translate("MainWindow", u"File", None))
+    # retranslateUi
 
-        layout = QVBoxLayout(widget)
-
-    
-        buttons = QHBoxLayout()
-
-        self.upload_button = QPushButton("Upload JSON")
-        self.save_button = QPushButton("Save")
-
-        buttons.addWidget(self.upload_button)
-        buttons.addWidget(self.save_button)
-
-        layout.addLayout(buttons)
-
-       
-        self.editor = QPlainTextEdit()
-        self.editor.setPlaceholderText(
-            "Upload a JSON file..."
-        )
-
-        layout.addWidget(self.editor)
-
-        
-        self.file_label = QLabel("File: No file selected")
-        self.status_label = QLabel("Status: Ready")
-
-        layout.addWidget(self.file_label)
-        layout.addWidget(self.status_label)
-
-     
-        self.upload_button.clicked.connect(self.upload_json)
-        self.save_button.clicked.connect(self.save_json)
-
-  
-        self.save_button.setEnabled(False)
-
-    def upload_json(self):
-
-        file_path, _ = QFileDialog.getOpenFileName(
-            self,
-            "Select JSON File",
-            "",
-            "JSON Files (*.json)"
-        )
-
-        if not file_path:
-            return
-
-        try:
-            with open(file_path, "r", encoding="utf-8") as file:
-                data = json.load(file)
-
-            self.editor.setPlainText(
-                json.dumps(data, indent=4, ensure_ascii=False)
-            )
-
-            self.current_file = file_path
-
-            self.file_label.setText(
-                f"File: {file_path}"
-            )
-
-            self.status_label.setText(
-                "Status: JSON loaded"
-            )
-
-            self.save_button.setEnabled(True)
-
-        except json.JSONDecodeError as error:
-
-            QMessageBox.critical(
-                self,
-                "Invalid JSON",
-                f"Invalid JSON file.\n\n{error}"
-            )
-
-        except Exception as error:
-
-            QMessageBox.critical(
-                self,
-                "Error",
-                f"Could not open file.\n\n{error}"
-            )
-
-    def save_json(self):
-
-        if not self.current_file:
-            return
-
-        try:
-
-          
-            data = json.loads(
-                self.editor.toPlainText()
-            )
-
-            with open(
-                self.current_file,
-                "w",
-                encoding="utf-8"
-            ) as file:
-
-                json.dump(
-                    data,
-                    file,
-                    indent=4,
-                    ensure_ascii=False
-                )
-
-            self.status_label.setText(
-                "Status: Saved successfully"
-            )
-
-            QMessageBox.information(
-                self,
-                "Saved",
-                "JSON file updated successfully."
-            )
-
-        except json.JSONDecodeError as error:
-
-            QMessageBox.critical(
-                self,
-                "Invalid JSON",
-                f"Your JSON has an error.\n\n{error}"
-            )
-
-        except Exception as error:
-
-            QMessageBox.critical(
-                self,
-                "Save Error",
-                f"Could not save file.\n\n{error}"
-            )
