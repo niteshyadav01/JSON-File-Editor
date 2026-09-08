@@ -1,0 +1,13 @@
+{
+  "name": "demo",
+  "version": 1,
+  "ratio": 1.5,
+  "active": true,
+  "note": null,
+  "tags": ["a", "b"],
+  "meta": {
+    "nested": {
+      "ok": false
+    }
+  }
+}
