@@ -2,7 +2,7 @@ import sys
 
 from PySide6.QtWidgets import QApplication
 
-from gui.tree_model import MainWindow
+from models.edit_model import MainWindow
 
 
 def main():
