@@ -5,13 +5,10 @@ from models.tree_node import TreeNode
 
 class TreeModel(QAbstractItemModel):
 
-    def __init__(self, data=None):
+    def __init__(self):
         super().__init__()
 
-        self.root = TreeNode("root", data)
-
-        if data is not None:
-            self.createTree(self.root, data)
+        self.root = TreeNode("root", None)
 
     def createTree(self, parent, data):
 

@@ -5,6 +5,7 @@ from PySide6.QtWidgets import (
 )
 
 from models.tree_model import TreeModel
+from models.tree_node import TreeNode
 from delegates.json_delegate import JsonDelegate
 from services.json_service import JsonService
 from win_main_ui import Ui_MainWindow
@@ -16,48 +17,48 @@ class MainWindow(QMainWindow):
 
         super().__init__()
 
-        self.ui = Ui_MainWindow()
-        self.ui.setupUi(self)
+        self.mUi = Ui_MainWindow()
+        self.mUi.setupUi(self)
 
-        self.model = None
-        self.file_name = ""
+        self.mModel = None
+        self.mFileName = ""
 
-        self.ui.listView.setItemDelegate(JsonDelegate(self.ui.listView))
+        self.mUi.listView.setItemDelegate(JsonDelegate(self.mUi.listView))
 
-        self.ui.actionopen.triggered.connect(self.open_file)
-        self.ui.actionedit.triggered.connect(self.save_file)
-        self.ui.actionSave_As.triggered.connect(self.save_as)
+        self.mUi.actionopen.triggered.connect(self.openFile)
+        self.mUi.actionedit.triggered.connect(self.saveFile)
+        self.mUi.actionSave_As.triggered.connect(self.saveAs)
 
-    def open_file(self):
+    def openFile(self):
 
-        file_name, _ = QFileDialog.getOpenFileName(
+        fileName, _ = QFileDialog.getOpenFileName(
             self,
             "Open JSON File",
             "",
             "JSON Files (*.json)"
         )
 
-        if not file_name:
+        if not fileName:
             return
 
         try:
-            data = JsonService.load(file_name)
+            data = JsonService.load(fileName)
         except Exception as e:
             QMessageBox.critical(self, "Error", str(e))
             return
 
-        self.model = TreeModel(data)
-        self.ui.listView.setModel(self.model)
-        self.ui.listView.setColumnWidth(0, 250)
-        self.ui.listView.setColumnWidth(1, 400)
+        self.mModel = TreeModel()
+        self.mModel.root = TreeNode("root", data)
+        self.mModel.createTree(self.mModel.root, data)
+        self.mUi.listView.setModel(self.mModel)
 
-        self.file_name = file_name
-        self.setWindowTitle("JSON Editor - " + file_name)
-        self.ui.statusbar.showMessage("File loaded successfully")
+        self.mFileName = fileName
+        self.setWindowTitle("JSON Editor - " + fileName)
+        self.mUi.statusbar.showMessage("File loaded successfully")
 
-    def save_file(self):
+    def saveFile(self):
 
-        if self.model is None:
+        if self.mModel is None:
             QMessageBox.warning(
                 self,
                 "Warning",
@@ -65,21 +66,21 @@ class MainWindow(QMainWindow):
             )
             return
 
-        if not self.file_name:
-            self.save_as()
+        if not self.mFileName:
+            self.saveAs()
             return
 
         try:
-            JsonService.save(self.file_name, self.model.get_json())
+            JsonService.save(self.mFileName, self.mModel.get_json())
         except Exception as e:
             QMessageBox.critical(self, "Error", str(e))
             return
 
-        self.ui.statusbar.showMessage("File saved successfully")
+        self.mUi.statusbar.showMessage("File saved successfully")
 
-    def save_as(self):
+    def saveAs(self):
 
-        if self.model is None:
+        if self.mModel is None:
             QMessageBox.warning(
                 self,
                 "Warning",
@@ -87,22 +88,22 @@ class MainWindow(QMainWindow):
             )
             return
 
-        file_name, _ = QFileDialog.getSaveFileName(
+        fileName, _ = QFileDialog.getSaveFileName(
             self,
             "Save JSON File",
             "",
             "JSON Files (*.json)"
         )
 
-        if not file_name:
+        if not fileName:
             return
 
         try:
-            saved_path = JsonService.save(file_name, self.model.get_json())
+            savedPath = JsonService.save(fileName, self.mModel.get_json())
         except Exception as e:
             QMessageBox.critical(self, "Error", str(e))
             return
 
-        self.file_name = saved_path
-        self.setWindowTitle("JSON Editor - " + saved_path)
-        self.ui.statusbar.showMessage("File saved successfully")
+        self.mFileName = savedPath
+        self.setWindowTitle("JSON Editor - " + savedPath)
+        self.mUi.statusbar.showMessage("File saved successfully")
